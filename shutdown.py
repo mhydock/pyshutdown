@@ -16,9 +16,7 @@
 #===============================================================================
 #!/usr/bin/env python3
 
-import pygtk
-pygtk.require('2.0')
-import gtk
+from gi.repository import Gtk 
 import os
 import re
 
@@ -37,18 +35,18 @@ class DoTheLogOut:
 
 	# Cancel/exit
 	def delete_event(self, widget, event, data=None):
-		gtk.main_quit()
+		Gtk.main_quit()
 		return False
 
 	# Suspend
 	def suspend(self, widget):
 		os.system("dbus-send --system --print-reply --dest=org.freedesktop.UPower /org/freedesktop/UPower org.freedesktop.UPower.Suspend")
-		gtk.main_quit()
+		Gtk.main_quit()
 		
 	# Hibernate
 	def hibernate(self, widget):
 		os.system("dbus-send --system --print-reply --dest=org.freedesktop.UPower /org/freedesktop/UPower org.freedesktop.UPower.Hibernate")
-		gtk.main_quit()
+		Gtk.main_quit()
 		
 	# Reboot
 	def reboot(self, widget):
@@ -76,17 +74,17 @@ class DoTheLogOut:
 			if can_lock_screen:
 				os.system("xscreensaver-command --lock")
 			
-		gtk.main_quit()
+		Gtk.main_quit()
         
         
 	def __init__(self):
-		self.settings = gtk.settings_get_default()
-		self.settings.props.gtk_button_images = True
+		self.settings = Gtk.Settings.get_default()
+		self.settings.set_property("gtk-button-images",True)
 
-		self.icon_theme = gtk.icon_theme_get_default()
+		self.icon_theme = Gtk.IconTheme.get_default()
 	
 		# Create a new window
-		self.window = gtk.Window(gtk.WINDOW_TOPLEVEL)
+		self.window = Gtk.Window(Gtk.WindowType.TOPLEVEL)
 		self.window.set_title("Openbox Shutdown")
 		self.window.set_resizable(False)
 		self.window.set_position(1)
@@ -94,75 +92,63 @@ class DoTheLogOut:
 		self.window.set_border_width(10)
 
 		# Create a box to pack widgets into
-		self.main_box = gtk.VBox(False, 0)
+		self.main_box = Gtk.VBox(False, 0)
 		self.window.add(self.main_box)
 
 		# Create the shutdown button frame.
-		self.frame1 = gtk.Frame()
-		self.frame1.set_shadow_type(gtk.SHADOW_NONE)
-		self.box1 = gtk.VBox(False,0)
+		self.frame1 = Gtk.Frame()
+		self.frame1.set_shadow_type(Gtk.ShadowType.NONE)
+		self.box1 = Gtk.VBox(False,0)
 		self.frame1.add(self.box1)
 		self.main_box.add(self.frame1)
 
 		# Create shutdown button
-		self.button1 = self.makeSuperButton("<span font_weight=\"bold\">Shut Down</span>\n<span font_weight=\"light\" size=\"small\">Ends your session and turns off the power.</span>","system-shutdown",big)
+		self.button1 = self.makeSuperButton("<span font_weight=\"bold\">Shut Down</span>\n<span font_weight=\"light\" size=\"small\">Ends your session and turns off the power.</span>","system-shutdown",big,10)
 		self.button1.connect("clicked", self.shutdown)
 		self.box1.pack_start(self.button1, True, True, 0)
 		self.button1.show()
 
 		# Create reboot button
-		self.button2 = self.makeSuperButton("<span font_weight=\"bold\">Reboot</span>\n<span font_weight=\"light\" size=\"small\">Ends your session and restarts the computer.</span>","reload", big)
+		self.button2 = self.makeSuperButton("<span font_weight=\"bold\">Reboot</span>\n<span font_weight=\"light\" size=\"small\">Ends your session and restarts the computer.</span>","reload",big,10)
 		self.button2.connect("clicked", self.reboot)
 		self.box1.pack_start(self.button2, True, True, 0)
 		self.button2.show()
         
 		# Create suspend button
-		self.button3 = self.makeSuperButton("<span font_weight=\"bold\">Suspend</span>\n<span font_weight=\"light\" size=\"small\">Suspends your session quickly, using\nminimal power while the computer stands by.</span>","sleep", big)
+		self.button3 = self.makeSuperButton("<span font_weight=\"bold\">Suspend</span>\n<span font_weight=\"light\" size=\"small\">Suspends your session quickly, using\nminimal power while the computer stands by.</span>","sleep",big,10)
 		self.button3.connect("clicked", self.suspend)
 		#self.button3.connect("clicked", self.delete_event, "Force removal :(")
 		self.box1.pack_start(self.button3, True, True, 0)
 		self.button3.show()
 
 		# Create hibernate button
-		self.button4 = self.makeSuperButton("<span font_weight=\"bold\">Hibernate</span>\n<span font_weight=\"light\" size=\"small\">Suspends your session, using no power\nuntil the computer is restarted.</span>","filesave", big)
+		self.button4 = self.makeSuperButton("<span font_weight=\"bold\">Hibernate</span>\n<span font_weight=\"light\" size=\"small\">Suspends your session, using no power\nuntil the computer is restarted.</span>","filesave",big,10)
 		self.button4.connect("clicked", self.hibernate)
 		self.box1.pack_start(self.button4, True, True, 0)
 		self.button4.show()
 
 		
 		# Create the cancel/logout/lock button frame.
-		self.frame2 = gtk.Frame()
-		self.frame2.set_shadow_type(gtk.SHADOW_NONE)
-		self.box2 = gtk.HBox(False,0)
+		self.frame2 = Gtk.Frame()
+		self.frame2.set_shadow_type(Gtk.ShadowType.NONE)
+		self.box2 = Gtk.HBox(False,0)
 		self.frame2.add(self.box2)
 		self.main_box.add(self.frame2)
 		
 		# Create cancel button
-		self.button5 = gtk.Button("Cancel")
-		icon_pixbuf = self.get_pixbuf_icon("stop", small)
-		self.button5.set_image(gtk.image_new_from_pixbuf(icon_pixbuf))
-		self.button5.set_image_position(gtk.POS_LEFT);
-		self.button5.set_border_width(5)
+		self.button5 = self.makeSuperButton("Cancel","stop",small,3)
 		self.button5.connect("clicked", self.delete_event, "Changed my mind.")
 		self.box2.pack_start(self.button5, True, True, 0)
 		self.button5.show()
 		
 		# Create log out button
-		self.button6 = gtk.Button("Log Out")
-		icon_pixbuf = self.get_pixbuf_icon("system-log-out", small)
-		self.button6.set_image(gtk.image_new_from_pixbuf(icon_pixbuf))
-		self.button6.set_image_position(gtk.POS_LEFT);
-		self.button6.set_border_width(5)
+		self.button6 = self.makeSuperButton("Log Out","system-log-out",small,3)
 		self.button6.connect("clicked", self.logout)
 		self.box2.pack_start(self.button6, True, True, 0)
 		self.button6.show()
 		
         # Create lock button
-		self.button7 = gtk.Button("Lock Screen")
-		icon_pixbuf = self.get_pixbuf_icon("lock", small)
-		self.button7.set_image(gtk.image_new_from_pixbuf(icon_pixbuf))
-		self.button7.set_image_position(gtk.POS_LEFT);
-		self.button7.set_border_width(5)
+		self.button7 = self.makeSuperButton("Lock Screen","lock",small,3)
 		self.button7.connect("clicked", self.lock_session)
 		self.box2.pack_start(self.button7, True, True, 0)
 		self.button7.show()
@@ -171,20 +157,20 @@ class DoTheLogOut:
 	
 	# Made this because basic buttons didn't have the style capabilities I
 	# needed if I were to replicate the GNOME logout panel.
-	def makeSuperButton(self, text, icon, size):
-		box = gtk.HBox(False,0)
-		button = gtk.Button()
+	def makeSuperButton(self, text, icon, size, space):
+		box = Gtk.HBox(False,0)
+		button = Gtk.Button()
 		button.add(box)
 		
-		image_pixbuf = self.get_pixbuf_icon(icon, size)
-		image = gtk.image_new_from_pixbuf(image_pixbuf)
-		box.pack_start(image, False, False, 10)
+		image_pixbuf = Gtk.IconTheme.load_icon(self.icon_theme, icon, size, Gtk.IconLookupFlags.GENERIC_FALLBACK)
+		image = Gtk.Image.new_from_pixbuf(image_pixbuf)
+		box.pack_start(image, False, False, space)
 		
-		label = gtk.Label()
+		label = Gtk.Label()
 		label.set_use_markup(True)
 		label.set_markup(text)
-		label.set_justify(gtk.JUSTIFY_LEFT)
-		box.pack_start(label, False, False, 10)
+		label.set_justify(Gtk.Justification.LEFT)
+		box.pack_start(label, False, False, space)
 		
 		image.set_alignment(0.0,0.5)
 		button.set_alignment(0.0,0.5)
@@ -192,34 +178,8 @@ class DoTheLogOut:
 
 		return button
 		
-	# Taken wholesale from YAMA, an AWN applet to display an applications menu.
-	def get_pixbuf_icon(self, icon_value, size):
-		if not icon_value:
-			return None
-
-		if os.path.isabs(icon_value):
-			if os.path.isfile(icon_value):
-				try:
-					return gtk.gdk.pixbuf_new_from_file_at_size(icon_value, size, size)
-				except glib.GError:
-					return None
-			icon_name = os.path.basename(icon_value)
-		else:
-			icon_name = icon_value
-
-		if re.match(".*\.(png|xpm|svg)$", icon_name) is not None:
-			icon_name = icon_name[:-4]
-		try:
-			return self.icon_theme.load_icon(icon_name, size, gtk.ICON_LOOKUP_FORCE_SIZE)
-		except:
-			for dir in xdg_data_dirs:
-				for i in ("pixmaps", "icons"):
-					path = os.path.join(dir, i, icon_value)
-					if os.path.isfile(path):
-						return gtk.gdk.pixbuf_new_from_file_at_size(path, size, size)
-		
 def main():
-	gtk.main()
+	Gtk.main()
 
 if __name__ == "__main__":
 	gogogo = DoTheLogOut()
