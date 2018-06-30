@@ -40,12 +40,12 @@ class DoTheLogOut:
 
 	# Suspend
 	def suspend(self, widget):
-		os.system("dbus-send --system --print-reply --dest=org.freedesktop.UPower /org/freedesktop/UPower org.freedesktop.UPower.Suspend")
+		os.system("dbus-send --system --print-reply --dest=org.freedesktop.login1 /org/freedesktop/login1 org.freedesktop.login1.Manager.Suspend boolean:true")
 		Gtk.main_quit()
 		
 	# Hibernate
 	def hibernate(self, widget):
-		os.system("dbus-send --system --print-reply --dest=org.freedesktop.UPower /org/freedesktop/UPower org.freedesktop.UPower.Hibernate")
+		os.system("dbus-send --system --print-reply --dest=org.freedesktop.login1 /org/freedesktop/login1 org.freedesktop.login1.Manager.Hibernate boolean:true")
 		Gtk.main_quit()
 		
 	# Reboot
