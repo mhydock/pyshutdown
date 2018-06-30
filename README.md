@@ -12,3 +12,7 @@ Dependencies
 * Python 3.x
 * GTK 3.x
 * DBus
+
+Screenshot:
+
+![screenshot](./screenshot.png)
